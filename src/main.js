@@ -1,5 +1,6 @@
 import "./style.css";
 import { Client, Databases, ID } from "appwrite";
+import { DATABASE_ID, PROJECT_ID, COLLECTION_ID } from "./shh";
 
 const client = new Client()
   .setEndpoint("https://cloud.appwrite.io/v1")
@@ -37,7 +38,28 @@ const addJob = (e) => {
 
 form.addEventListener("submit", addJob);
 
+const removeJob = async (id) => {
+  const result = await databases.deleteDocument(
+    "67b915ac0019372fb537",
+    "67b915cf00201a13371a",
+    id
+  );
+  document.getElementById(id).remove();
+};
+
+const updateChat = async (id) => {
+  const result = databases.updateDocument(
+    "67b915ac0019372fb537", // databaseId
+    "67b915cf00201a13371a", // collectionId
+    "id", // documentId
+    { chat: true } // data (optional)
+    // permissions (optional)
+  );
+  result.then(() => location.reload());
+};
+
 async function addJobsToDom() {
+  document.querySelector("ul").innerHTML = "";
   let response = await databases.listDocuments(
     "67b915ac0019372fb537",
     "67b915cf00201a13371a"
@@ -45,7 +67,21 @@ async function addJobsToDom() {
 
   response.documents.forEach((job) => {
     const li = document.createElement("li");
-    li.textContent = `${job["company-name"]} ${job["date-added"]} ${job["role"]} ${job["location"]} ${job["position-type"]} ${job["source"]}`;
+    li.textContent = `${job["company-name"]} ${job["date-added"]} ${job["role"]} ${job["location"]} ${job["position-type"]} ${job["source"]} coffee chat? ${job["chat"]}`;
+
+    li.id = job.$id;
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.textContent = "🧨";
+    deleteBtn.onclick = () => removeJob(job.$id);
+
+    const coffeBtn = document.createElement("button");
+    coffeBtn.textContent = "🍵";
+    coffeBtn.onClick = () => updateChat(job.$id);
+
+    li.appendChild(coffeBtn);
+    li.appendChild(deleteBtn);
+
     document.querySelector("ul").appendChild(li);
   });
 
