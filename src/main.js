@@ -47,11 +47,13 @@ const updateChat = async (id) => {
   const result = databases.updateDocument(
     DATABASE_ID, // databaseId
     COLLECTION_ID, // collectionId
-    "id", // documentId
+    id, // documentId
     { chat: true } // data (optional)
     // permissions (optional)
   );
-  result.then(() => location.reload());
+  result.then(function () {
+    location.reload();
+  });
 };
 
 async function addJobsToDom() {
@@ -69,8 +71,8 @@ async function addJobsToDom() {
     deleteBtn.onclick = () => removeJob(job.$id);
 
     const teaBtn = document.createElement("button");
-    teaBtn.textContent = "🍵";
-    teaBtn.onClick = () => updateChat(job.$id);
+    teaBtn.textContent = "☕";
+    teaBtn.onclick = () => updateChat(job.$id);
 
     li.appendChild(teaBtn);
     li.appendChild(deleteBtn);
