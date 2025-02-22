@@ -4,7 +4,7 @@ import { DATABASE_ID, PROJECT_ID, COLLECTION_ID } from "./shh";
 
 const client = new Client()
   .setEndpoint("https://cloud.appwrite.io/v1")
-  .setProject("67b914ee001a5b7e6f8a");
+  .setProject(PROJECT_ID);
 
 const databases = new Databases(client);
 
@@ -13,8 +13,8 @@ const form = document.querySelector("form");
 const addJob = (e) => {
   e.preventDefault();
   const job = databases.createDocument(
-    "67b915ac0019372fb537",
-    "67b915cf00201a13371a",
+    DATABASE_ID,
+    COLLECTION_ID,
     ID.unique(),
     {
       "company-name": e.target.companyName.value,
@@ -39,18 +39,14 @@ const addJob = (e) => {
 form.addEventListener("submit", addJob);
 
 const removeJob = async (id) => {
-  const result = await databases.deleteDocument(
-    "67b915ac0019372fb537",
-    "67b915cf00201a13371a",
-    id
-  );
+  const result = await databases.deleteDocument(DATABASE_ID, COLLECTION_ID, id);
   document.getElementById(id).remove();
 };
 
 const updateChat = async (id) => {
   const result = databases.updateDocument(
-    "67b915ac0019372fb537", // databaseId
-    "67b915cf00201a13371a", // collectionId
+    DATABASE_ID, // databaseId
+    COLLECTION_ID, // collectionId
     "id", // documentId
     { chat: true } // data (optional)
     // permissions (optional)
@@ -60,10 +56,7 @@ const updateChat = async (id) => {
 
 async function addJobsToDom() {
   document.querySelector("ul").innerHTML = "";
-  let response = await databases.listDocuments(
-    "67b915ac0019372fb537",
-    "67b915cf00201a13371a"
-  );
+  let response = await databases.listDocuments(DATABASE_ID, COLLECTION_ID);
 
   response.documents.forEach((job) => {
     const li = document.createElement("li");
@@ -75,11 +68,11 @@ async function addJobsToDom() {
     deleteBtn.textContent = "🧨";
     deleteBtn.onclick = () => removeJob(job.$id);
 
-    const coffeBtn = document.createElement("button");
-    coffeBtn.textContent = "🍵";
-    coffeBtn.onClick = () => updateChat(job.$id);
+    const teaBtn = document.createElement("button");
+    teaBtn.textContent = "🍵";
+    teaBtn.onClick = () => updateChat(job.$id);
 
-    li.appendChild(coffeBtn);
+    li.appendChild(teaBtn);
     li.appendChild(deleteBtn);
 
     document.querySelector("ul").appendChild(li);
@@ -98,8 +91,8 @@ async function addJobsToDom() {
 addJobsToDom();
 
 // const promise = databases.createDocument(
-//   "67b915ac0019372fb537",
-//   "67b915cf00201a13371a",
+//   DATABASE_ID,
+//   COLLECTION_ID,
 //   ID.unique(),
 //   {
 //     "company-name": "100Devs",
